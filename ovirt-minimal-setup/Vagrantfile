@@ -59,11 +59,12 @@ Vagrant.configure("2") do |config|
         # For pure IPv6 deployment
         node.vm.network :private_network,
                    ipv6_network_options("nat", "192.168.250.200", false, "fd00:1234:5678:500::1", "64")
-        shell_provision(node, ipv6_only_host_setup("fd00:1234:5678:500::100/64", "fd00:1234:5678:500::1", "eth1"))
+        shell_provision(node, ipv6_only_host_setup("fd00:1234:5678:500::200/64", "fd00:1234:5678:500::1", "eth1"))
 
-        copy_file(node, "scripts/disable_sso.sh", "/tmp/disable_sso.sh")
+        copy_file(node, "../common/scripts/engine_setup.sh", "/tmp/engine_setup.sh")
+        copy_file(node, "../common/answers/answer.conf", "/tmp/answer.conf")
 
-        shell_provision(node, "yum -y install ovirt-engine")
+        shell_provision(node, "sh /tmp/engine_setup.sh")
     end
 
     config.vm.define "host0" do |node|
@@ -75,11 +76,11 @@ Vagrant.configure("2") do |config|
 
             # For pure IPv6 deployment
             node.vm.network :private_network,
-                        ipv6_network_options("nat", "192.168.250.200", false, "fd00:1234:5678:500::1", "64")
+                        ipv6_network_options("nat", "192.168.250.100", false, "fd00:1234:5678:500::1", "64")
             shell_provision(node, ipv6_only_host_setup("fd00:1234:5678:500::100/64", "fd00:1234:5678:500::1", "eth1"))
 
-            copy_file(node, "scripts/host_nfs_storage_setup.sh", "/tmp/host_nfs_storage_setup.sh")
-            copy_file(node, "scripts/host_setup.sh", "/tmp/host_setup.sh")
+            copy_file(node, "../common/scripts/host_nfs_storage_setup.sh", "/tmp/host_nfs_storage_setup.sh")
+            copy_file(node, "../common/scripts/host_setup.sh", "/tmp/host_setup.sh")
 
             shell_provision(node, "sh /tmp/host_setup.sh")
     end
