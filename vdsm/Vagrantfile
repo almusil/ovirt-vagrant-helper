@@ -1,0 +1,44 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+def shell_provision(node, command)
+    node.vm.provision "shell", inline: command
+end
+
+def copy_file(node, source, destination)
+    node.vm.provision "file",
+        source: source,
+        destination: destination
+end
+
+Vagrant.configure("2") do |config|
+
+    config.vm.provider :libvirt do |p|
+        p.management_network_name = "ovirt-vdsm-management"
+        p.management_network_address = '192.168.125.0/24'
+        p.cpus = 2
+        p.nested = true
+        p.cpu_mode = "host-passthrough"
+    end
+
+    config.vm.define "vdsm" do |node|
+        node.vm.box = "centos/7"
+
+        node.vm.provider :libvirt do |domain|
+            domain.memory = 4096
+        end
+
+        node.vm.synced_folder "../../vdsm", "/root/vdsm"
+
+        copy_file(node, "../common/scripts/vdsm_setup.sh", "/tmp/vdsm_setup.sh")
+
+        shell_provision(node, "sh /tmp/vdsm_setup.sh")
+    end
+
+
+    config.vm.provision "shell", inline: <<-SHELL
+        yum -y update
+        yum -y install python-setuptools http://resources.ovirt.org/pub/yum-repo/ovirt-release-master.rpm
+        easy_install pip
+    SHELL
+end
