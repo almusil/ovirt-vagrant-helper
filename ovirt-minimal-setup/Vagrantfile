@@ -70,23 +70,23 @@ Vagrant.configure("2") do |config|
     end
 
     config.vm.define "host0" do |node|
-            node.vm.box = "centos/7"
+        node.vm.box = "centos/7"
 
-            node.vm.provider :libvirt do |domain|
-                domain.memory = 4096
-            end
+        node.vm.provider :libvirt do |domain|
+            domain.memory = 4096
+        end
 
-            if ENV.has_key?("IPV6_ONLY")
-                # For pure IPv6 deployment
-                node.vm.network :private_network,
-                    ipv6_network_options("nat", "192.168.250.100", false, "fd00:1234:5678:500::1", "64")
-                shell_provision(node, ipv6_only_host_setup("fd00:1234:5678:500::100/64", "fd00:1234:5678:500::1", "eth1"))
-            end
+        if ENV.has_key?("IPV6_ONLY")
+            # For pure IPv6 deployment
+            node.vm.network :private_network,
+                ipv6_network_options("nat", "192.168.250.100", false, "fd00:1234:5678:500::1", "64")
+            shell_provision(node, ipv6_only_host_setup("fd00:1234:5678:500::100/64", "fd00:1234:5678:500::1", "eth1"))
+        end
 
-            copy_file(node, "../common/scripts/host_nfs_storage_setup.sh", "/tmp/host_nfs_storage_setup.sh")
-            copy_file(node, "../common/scripts/host_setup.sh", "/tmp/host_setup.sh")
+        copy_file(node, "../common/scripts/host_nfs_storage_setup.sh", "/tmp/host_nfs_storage_setup.sh")
+        copy_file(node, "../common/scripts/host_setup.sh", "/tmp/host_setup.sh")
 
-            shell_provision(node, "sh /tmp/host_setup.sh")
+        shell_provision(node, "sh /tmp/host_setup.sh")
     end
 
     config.vm.provision "shell", inline: <<-SHELL
