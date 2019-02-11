@@ -11,13 +11,13 @@ def network_options(type, ip, dhcp_enable)
     options
 end
 
-def ipv6_network_options(type, ip, dhcp_enable, ipv6, ipv6_prefix)
+def ipv6_network_options(type, ip, dhcp_enable, ipv6_gateway, ipv6_prefix)
     options = {}
         options[:ip] = ip
         options[:type] = type
         options[:libvirt__dhcp_enabled] = dhcp_enable
         options[:libvirt__guest_ipv6] = "yes"
-        options[:libvirt__ipv6_address] = ipv6
+        options[:libvirt__ipv6_address] = ipv6_gateway
         options[:libvirt__ipv6_prefix] = ipv6_prefix
         options
 end
