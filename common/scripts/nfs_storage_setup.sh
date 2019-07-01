@@ -1,4 +1,4 @@
-#/bin/sh -xe
+#!/bin/sh -xe
 
 DATA_FOLDER="/exports/data"
 ISO_FOLDER="/exports/iso"
